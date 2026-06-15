@@ -1,6 +1,6 @@
 {
 	"name": "@yohs/firebase-utils",
-	"version": "0.3.6",
+	"version": "0.3.7",
 	"description": "Firebase Admin SDK utilities",
 	"license": "MIT",
 	"type": "module",

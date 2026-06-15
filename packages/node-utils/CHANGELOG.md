@@ -1,5 +1,11 @@
 # @yohs/node-utils
 
+## 0.2.4
+
+### Patch Changes
+
+- Add gzip support for Firebase Storage uploads.
+
 ## 0.2.3
 
 ### Patch Changes

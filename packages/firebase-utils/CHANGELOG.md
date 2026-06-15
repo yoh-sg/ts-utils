@@ -1,5 +1,14 @@
 # @yohs/firebase-utils
 
+## 0.3.7
+
+### Patch Changes
+
+- Add gzip support for Firebase Storage uploads.
+
+- Updated dependencies []:
+  - @yohs/node-utils@0.2.4
+
 ## 0.3.6
 
 ### Patch Changes
