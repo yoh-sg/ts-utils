@@ -73,8 +73,8 @@ importers:
   packages/firebase-utils:
     dependencies:
       '@yohs/node-utils':
-        specifier: ^0.2.3
-        version: 0.2.3
+        specifier: workspace:^
+        version: link:../node-utils
       '@yohs/ts-core':
         specifier: ^0.3.7
         version: 0.3.7
@@ -1413,10 +1413,6 @@ packages:
 
   '@vitest/utils@3.2.4':
     resolution: {integrity: sha512-fB2V0JFrQSMsCo9HiSq3Ezpdv4iYaXRG1Sx8edX3MwxfyNn83mKiGzOcH+Fkxt4MHxr3y42fQi1oeAInqgX2QA==}
-
-  '@yohs/node-utils@0.2.3':
-    resolution: {integrity: sha512-B2fSlnrHSJ5CE6einrDysBvhigwT3X40GcuiTUK+joN+XUlBrng4qT1Ms5JEb3qMAF5/JBqdbRzxa4VWWTnRiQ==}
-    engines: {node: '>=20'}
 
   '@yohs/ts-core@0.3.7':
     resolution: {integrity: sha512-TVFCXOz6mmfpcQZHv+0v+GSRxFabKbcSMmDrfp4ZQ1lc130jWQ1D9I1Lgz1fVviSreW/YNPQRFasDynalTH+ww==}
@@ -4604,11 +4600,6 @@ snapshots:
       '@vitest/pretty-format': 3.2.4
       loupe: 3.2.1
       tinyrainbow: 2.0.0
-
-  '@yohs/node-utils@0.2.3':
-    dependencies:
-      '@yohs/ts-core': 0.3.7
-      execa: 9.6.1
 
   '@yohs/ts-core@0.3.7': {}
 

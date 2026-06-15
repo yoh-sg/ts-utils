@@ -32,7 +32,7 @@
 		"prepublishOnly": "pnpm run build && pnpm run test"
 	},
 	"dependencies": {
-		"@yohs/node-utils": "^0.2.3",
+		"@yohs/node-utils": "workspace:^",
 		"@yohs/ts-core": "^0.3.7"
 	},
 	"peerDependencies": {
