@@ -1,6 +1,6 @@
 {
 	"name": "@yohs/esbuild-utils",
-	"version": "0.2.5",
+	"version": "0.2.6",
 	"description": "Reusable esbuild plugins, runners, and CLI helpers",
 	"license": "MIT",
 	"type": "module",

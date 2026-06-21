@@ -1,5 +1,11 @@
 # @yohs/esbuild-utils
 
+## 0.2.6
+
+### Patch Changes
+
+- Add runtime artifact helpers for bundled Node services that externalize registry dependencies, bundle workspace dependencies, discover transitive runtime externals, and write generated deploy manifests.
+
 ## 0.2.5
 
 ### Patch Changes
