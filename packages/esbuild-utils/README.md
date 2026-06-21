@@ -4,6 +4,7 @@ Reusable esbuild helpers that make it easier to bootstrap local dev flows:
 
 - Opinionated runners that keep long-lived processes in sync with esbuild outputs
 - Quality-of-life plugins (clear console, custom logging, persistent spinner)
+- Runtime-artifact helpers for bundled Node services that need generated deploy manifests
 
 ## Quick start
 
@@ -35,9 +36,46 @@ export default {
 - `@yohs/esbuild-utils` – re-exports everything in this package
 - `@yohs/esbuild-utils/plugins` – bundled access to every plugin helper
 
+## Runtime artifact helpers
+
+Bundled Node services often need a deploy artifact whose `package.json` is narrower than the source package manifest. The runtime-artifact helpers support that shape:
+
+- registry dependencies are externalized and copied into the generated deploy manifest;
+- `workspace:*` dependencies are treated as source dependencies and bundled;
+- registry dependencies discovered from bundled workspace importers are added to the deploy manifest from the importer package's own dependency spec;
+- undeclared third-party bare imports fail during esbuild resolution.
+
+```ts
+import { createRuntimeDependencyBoundaryContext, deployPackageManifestPlugin, readPackageJson, runtimeDependencyBoundaryPlugin } from '@yohs/esbuild-utils/plugins'
+
+const packageJson = await readPackageJson('package.json')
+const boundary = createRuntimeDependencyBoundaryContext({
+  workspaceRootPath: process.cwd(),
+  packageJson,
+  internalPackageScopes: ['@muse'],
+  errorPackageJsonPath: 'services/my-service/package.json',
+})
+
+export default {
+  entryPoints: ['src/main.ts'],
+  bundle: true,
+  platform: 'node',
+  format: 'esm',
+  outfile: '.build/main.js',
+  plugins: [
+    runtimeDependencyBoundaryPlugin(boundary),
+    deployPackageManifestPlugin({
+      outputPath: '.build/package.json',
+      packageJson,
+      runtimeDependencies: boundary.runtimeDependencies,
+      main: 'main.js',
+    }),
+  ],
+}
+```
+
 ## Scripts
 
 - `pnpm build` – emits ESM modules and d.ts files via **tsdown**
 - `pnpm test` – runs the vitest suite
 - `pnpm lint` / `pnpm typecheck` – local validation helpers
-
