@@ -33,7 +33,7 @@
 	},
 	"peerDependencies": {
 		"@yohs/gcp-utils": "^0.1.5",
-		"esbuild": "^0.25"
+		"esbuild": "^0.28"
 	},
 	"peerDependenciesMeta": {
 		"@yohs/gcp-utils": {
@@ -42,7 +42,7 @@
 	},
 	"devDependencies": {
 		"@yohs/gcp-utils": "workspace:*",
-		"esbuild": "^0.24.0",
+		"esbuild": "^0.28.1",
 		"rimraf": "^6.1.2",
 		"tsdown": "^0.16.6",
 		"typescript": "^5.9.3"
