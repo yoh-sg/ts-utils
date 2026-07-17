@@ -1,2 +1,7 @@
 packages:
   - "packages/*"
+
+# pnpm 11 blocks dependency lifecycle scripts unless they are approved explicitly.
+allowBuilds:
+  esbuild: true
+  protobufjs: true
