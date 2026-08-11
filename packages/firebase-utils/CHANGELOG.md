@@ -1,5 +1,11 @@
 # @yohs/firebase-utils
 
+## 0.3.8
+
+### Patch Changes
+
+- Support generation-preconditioned GCS uploads and return the accepted object generation.
+
 ## 0.3.7
 
 ### Patch Changes
