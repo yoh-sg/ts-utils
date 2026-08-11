@@ -1,24 +1,27 @@
 import { brotliCompress, type BrotliOptions, constants } from 'node:zlib'
 
-// brotli compression (promisified wrapper)
-export async function brotli(buffer: Buffer): Promise<Buffer> {
-	// Brotli tuning
-	const BROTLI_QUALITY: number = 11
-	const BROTLI_LGWIN: number = 22
+export interface BrotliCompressionOptions {
+	quality?: number
+}
 
-	// TODO: maybe could expose basic params as options
+// brotli compression (promisified wrapper)
+export async function brotli(buffer: Buffer, compressionOptions: BrotliCompressionOptions = {}): Promise<Buffer> {
+	const quality: number = compressionOptions.quality ?? 11
 	const options: BrotliOptions = {
 		params: {
-			[constants.BROTLI_PARAM_QUALITY]: BROTLI_QUALITY,
-			[constants.BROTLI_PARAM_LGWIN]: BROTLI_LGWIN,
-		},
-		// maxOutputLength: 1024 * 1024 * 10,
+			[constants.BROTLI_PARAM_QUALITY]: quality,
+			[constants.BROTLI_PARAM_LGWIN]: 22
+		}
 	}
 
-	return new Promise((resolve, reject) => {
-		brotliCompress(buffer, options, (err: Error | null, result: Buffer) => {
-			if (err) reject(err)
-			resolve(result)
+	const result: Buffer = await new Promise<Buffer>((resolve, reject) => {
+		brotliCompress(buffer, options, (error: Error | null, compressed: Buffer) => {
+			if (error) {
+				reject(error)
+				return
+			}
+			resolve(compressed)
 		})
 	})
+	return result
 }

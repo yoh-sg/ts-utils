@@ -37,6 +37,23 @@ describe('uploadFile', () => {
 		expect(result.compression).toBe('gzip')
 	})
 
+	it('uploads Brotli data with explicit compression tuning', async () => {
+		const fixture: UploadFileFixture = uploadFileFixture('44')
+		const input: Buffer = Buffer.from(JSON.stringify({ hashes: Array.from({ length: 100 }, (_, index: number): string => `${index}-${'a'.repeat(64)}`) }))
+		const result: UploadedGcsObjectRef = await uploadFile(fixture.bucket, 'analytics/ig', 'current', 'json', input, {
+			compression: 'br',
+			brotliOptions: { quality: 4 },
+			metadata: { contentType: 'application/json', cacheControl: 'no-store' }
+		})
+
+		const compressed: Buffer = fixture.save.mock.calls[0]?.[0] as Buffer
+		const saveOptions: SaveOptions = fixture.save.mock.calls[0]?.[1] as SaveOptions
+		expect(compressed).not.toEqual(input)
+		expect(saveOptions?.metadata).toEqual({ contentType: 'application/json', contentEncoding: 'br', cacheControl: 'no-store' })
+		expect(result.fileName).toBe('current.json.br')
+		expect(result.compression).toBe('br')
+	})
+
 	it('fails when the accepted upload response has no generation', async () => {
 		const fixture: UploadFileFixture = uploadFileFixture(undefined)
 		await expect(uploadFile(fixture.bucket, 'analytics/ig', 'current', 'json', '{}')).rejects.toThrow('Missing GCS generation after uploading analytics/ig/current.json')

@@ -5,7 +5,7 @@ export type SaveData = string | Buffer //| Uint8Array
 
 import type { GcsObjectRef, UploadedGcsObjectRef } from './gcs-object'
 import { sha256 } from '@yohs/node-utils/crypto'
-import { brotli, gzip } from '@yohs/node-utils/zlib'
+import { brotli, gzip, type BrotliCompressionOptions } from '@yohs/node-utils/zlib'
 
 
 export interface UploadFileMetadata {
@@ -18,6 +18,7 @@ export type UploadFileCompression = boolean | 'br' | 'gzip' | 'none'
 
 export interface UploadFileOptions {
 	compression?: UploadFileCompression
+	brotliOptions?: BrotliCompressionOptions
 	hashedName?: boolean
 	metadata?: UploadFileMetadata
 	preconditionOpts?: SaveOptions['preconditionOpts']
@@ -34,7 +35,7 @@ export async function uploadFile(bucket: Bucket, fileDir: string, fileName: stri
 	// data processing
 	let d: SaveData = data
 	if (compression === 'br' && d instanceof Buffer) {
-		d = await brotli(d)
+		d = await brotli(d, opts.brotliOptions)
 	}
 	if (compression === 'gzip' && d instanceof Buffer) {
 		d = await gzip(d)
