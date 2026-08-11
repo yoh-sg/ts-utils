@@ -38,3 +38,9 @@ export interface GcsObjectRef {
 	/** Optional schema id for the file’s JSON shape (e.g. 'segments@1'). */
 	schema?: string
 }
+
+/** GCS object pointer returned after an accepted upload, including its immutable object generation. */
+export interface UploadedGcsObjectRef extends GcsObjectRef {
+	/** Exact GCS generation accepted by the completed upload. */
+	generation: string
+}

@@ -3,7 +3,7 @@ import { Timestamp } from 'firebase-admin/firestore'
 import type { Bucket, SaveOptions } from './types'
 export type SaveData = string | Buffer //| Uint8Array
 
-import type { GcsObjectRef } from './gcs-object'
+import type { GcsObjectRef, UploadedGcsObjectRef } from './gcs-object'
 import { sha256 } from '@yohs/node-utils/crypto'
 import { brotli, gzip } from '@yohs/node-utils/zlib'
 
@@ -20,13 +20,14 @@ export interface UploadFileOptions {
 	compression?: UploadFileCompression
 	hashedName?: boolean
 	metadata?: UploadFileMetadata
+	preconditionOpts?: SaveOptions['preconditionOpts']
 	public?: boolean
 }
 
 // Cloud Storage upload helper with optional pre-processing (Brotli compression, SHA-256 hash)
-export async function uploadFile(bucket: Bucket, fileDir: string, fileName: string, fileExtension: string, data: SaveData, options: UploadFileOptions = {}): Promise<GcsObjectRef> {
+export async function uploadFile(bucket: Bucket, fileDir: string, fileName: string, fileExtension: string, data: SaveData, options: UploadFileOptions = {}): Promise<UploadedGcsObjectRef> {
 	// options merging
-	let defaultOptions: UploadFileOptions = { compression: false, public: false, hashedName: false }
+	const defaultOptions: UploadFileOptions = { compression: false, public: false, hashedName: false }
 	const opts: UploadFileOptions = { ...defaultOptions, ...options }
 	const compression: GcsObjectRef['compression'] = normalizeUploadFileCompression(opts.compression)
 
@@ -52,7 +53,7 @@ export async function uploadFile(bucket: Bucket, fileDir: string, fileName: stri
 	const saveOptions: SaveOptions = {
 		resumable: false,
 		validation: 'crc32c',	// integrity check
-		// preconditionOpts: { ifGenerationMatch: 0 },	// only create if not already present
+		...(opts.preconditionOpts ? { preconditionOpts: opts.preconditionOpts } : {}),
 		metadata: {
 			...(opts.metadata?.contentType ? { contentType: opts.metadata.contentType } : {}),
 			...(compression !== 'none' ? { contentEncoding: compression } : {}),
@@ -61,16 +62,18 @@ export async function uploadFile(bucket: Bucket, fileDir: string, fileName: stri
 		}
 	}
 	await file.save(d, saveOptions)
+	const generation: string = requireUploadedGeneration(file.metadata?.generation, filePath)
 
 	// make file public (if requested)
 	if (opts.public) await file.makePublic()
 
 	// GCS object metadata
-	const ref: GcsObjectRef = {
+	const ref: UploadedGcsObjectRef = {
 		createdAt: Timestamp.now(),
 		bucket: bucket.name,
 		filePath: filePath,
 		fileName: fileNameWithCompression,
+		generation,
 		bytes: (d instanceof Buffer) ? d.byteLength : d.length,
 		hash: `sha256:${hash}`,
 		...(opts.metadata?.contentType ? { contentType: opts.metadata.contentType } : {}),
@@ -78,6 +81,11 @@ export async function uploadFile(bucket: Bucket, fileDir: string, fileName: stri
 	}
 
 	return ref
+}
+
+function requireUploadedGeneration(value: unknown, filePath: string): string {
+	if ((typeof value !== 'string' && typeof value !== 'number') || String(value).length === 0) throw new Error(`Missing GCS generation after uploading ${filePath}`)
+	return String(value)
 }
 
 function normalizeUploadFileCompression(compression: UploadFileCompression | undefined): GcsObjectRef['compression'] {
