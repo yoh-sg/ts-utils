@@ -1,5 +1,11 @@
 # @yohs/node-utils
 
+## 0.2.5
+
+### Patch Changes
+
+- [`68779a9`](https://github.com/yoh-sg/ts-utils/commit/68779a994dd177896fed5bf8c62d1a8383d7f606) Thanks [@yoh-sg](https://github.com/yoh-sg)! - Allow callers to tune Brotli compression parameters through storage uploads while preserving the existing defaults.
+
 ## 0.2.4
 
 ### Patch Changes
