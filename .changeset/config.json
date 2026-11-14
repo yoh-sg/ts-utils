@@ -1,6 +1,6 @@
 {
 	"$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
-	"changelog": ["@changesets/changelog-github", { "repo": "YLS-/ts-utils" }],
+	"changelog": ["@changesets/changelog-github", { "repo": "yoh-sg/ts-utils" }],
 	"commit": false,
 	"fixed": [],
 	"linked": [],
